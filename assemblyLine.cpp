@@ -1,45 +1,130 @@
-
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-int carAssembly(int a[][100],
-				int t[][100],
-				int *e, int *x, int num)
-{
-	int first, second, i;
 
-	first = e[0] + a[0][0];
-	second = e[1] + a[1][0];
-	for(i = 1; i < num; ++i)
-	{
-		int up = min(first + a[0][i],
-					second + t[1][i] +
-							a[0][i]);
-		int down = min(second + a[1][i],
-						first + t[0][i] +
-								a[1][i]);
-		first = up;
-		second = down;
-	}
-	return min(first + x[0],
-			second + x[1]);
+int assembly(vector<vector<int> > a,vector<vector<int> > t,vector<int> e,vector<int> x){
+
+    vector<vector<int> > ans(2,vector<int>(a[0].size(),0));
+    ans[0][0]=e[0]+a[0][0];
+    ans[1][0]=e[1]+a[1][0];
+
+    
+    vector<vector<int> > path(2,vector<int>(a.size()));
+    path[0][0]=0;
+    path[1][0]=1;
+    for (int i = 1; i < ans[0].size(); i++)
+    {
+        
+        if ((ans[0][i-1]+a[0][i])<(ans[1][i-1]+t[1][i-1]+a[0][i]))
+        {
+             ans[0][i]=(ans[0][i-1]+a[0][i]);
+            path[0][i]=0;
+
+        }
+        else
+        {
+            ans[0][i]=(ans[1][i-1]+t[1][i-1]+a[0][i]);
+            path[0][i]=1;
+
+        }
+
+
+        if ((ans[1][i-1]+a[1][i])<(ans[0][i-1]+t[0][i-1]+a[1][i]))
+        {
+            ans[1][i]=(ans[1][i-1]+a[1][i]);
+            path[1][i]=1;
+          
+        }
+        else
+        {
+            ans[1][i]=(ans[0][i-1]+t[0][i-1]+a[1][i]);
+            path[1][i]=0;
+        
+        }
+        
+
+    }
+    // int currp=-1;
+    // if(ans[0][ans[0].size()-1]+x[0]<ans[1][ans[0].size()-1]+x[1]){
+    //     currp=0;
+    // }
+    // else
+    // {
+    //     currp=1;
+    // }
+    // cout<<"station "<<a[0].size()<<" line "<<currp<<endl;
+    // currp=path[currp][path[0].size()-1];
+//     for (int i = path.size(); i >=0 ; i--)
+//     {
+        
+//         cout<<"station "<<i+1<<" line "<<currp<<endl;
+//         currp=path[currp][i];
+       
+//     }
+    
+//    cout<<"min cost possible is ";
+
+    return min(ans[0][ans[0].size()-1]+x[0],ans[1][ans[0].size()-1]+x[1]);
+
+
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
-    int num;
-    cin >> num;
-    int timeSpent[2][num], timeSwitch[2][num];
-    for(int i = 0; i < 2;i ++){
-        for(int j = 0; j < num; j++) cin >> timeSpent[i][j];
-    }
-    for(int i = 0; i < 2;i ++){
-        for(int j = 0; j < num; j++) cin >> timeSwitch[i][j];
-    }
-int e[2];
-for(int i = 0; i < 2; i++) cin >> e[i];
-int x[2];
-for(int i = 0; i < 2; i++) cin >> x[i];
+	freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+    for(int i = 0; i < 10; i++){
 
-cout << carAssembly(timeSpent, timeSwitch, e, x, num); 
+    int n;
+    // cout<<"no of stations : ";
+    cin>>n;
+
+    vector<vector<int> > a(2,vector<int>(n));
+    
+    // cout<<"values of stations on both lines : \n";
+    for (int i = 0; i < n; i++)
+    {
+        cin>>a[0][i];
+     
+    }
+    for (int i = 0; i < n; i++)
+    {
+        cin>>a[1][i];
+    
+    }
+
+
+    
+
+    vector<vector<int> > t(2,vector<int>(n-1));
+    // cout<<"transation time b/w stations : \n";
+    for (int i = 0; i < n-1; i++)
+    {
+        cin>>t[0][i];
+ 
+    }
+    
+    for (int i = 0; i < n-1; i++)
+    {
+        cin>>t[1][i];
+        
+    }
+    
+    
+
+    vector<int> e(2),x(2);
+    // cout<<"entry time of both stations : ";
+    cin>>e[0]>>e[1];
+    // cout<<"exit time of both stations : ";
+    cin>>x[0]>>x[1];
+
+    
+    auto start = chrono::steady_clock::now();
+
+	assembly(a,t,e,x);
+	auto end = chrono::steady_clock::now();
+    cout << chrono::duration_cast<chrono::nanoseconds>(end - start).count() << "," << '\n';
+   
+    
+	}
 }
 
